@@ -22,15 +22,13 @@ jobs:
         cache: gradle
 
     - name: Grant execute permission for gradlew
-      working-directory: android
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      working-directory: android # <--- KUNCI PERBAIKANNYA DI SINI
       run: ./gradlew assembleDebug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: android/app/build/outputs/apk/debug/app-debug.apk
+        path: app/build/outputs/apk/debug/app-debug.apk
