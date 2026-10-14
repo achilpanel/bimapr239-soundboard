@@ -1,7 +1,9 @@
-name: Build Android APK
+name: Android CI
 
 on:
   push:
+    branches: [ "main" ]
+  pull_request:
     branches: [ "main" ]
 
 jobs:
@@ -9,22 +11,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-    - name: Set up JDK 17
+    - name: Set up JDK
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      working-directory: android
+      run: chmod +x gradlew
 
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        gradle-version: 7.5
-        arguments: assembleDebug
+      working-directory: android # <--- KUNCI PERBAIKANNYA DI SINI
+      run: ./gradlew assembleDebug
 
-    - name: Upload APK
+    - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: bimapr239-soundboard-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        name: app-debug
+        path: android/app/build/outputs/apk/debug/app-debug.apk
